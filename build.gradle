@@ -1,3 +1,13 @@
 plugins {
     id 'java-library'
 }
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+dependencies {
+    implementation "com.google.cloud:google-cloud-texttospeech:+"
+    implementation "javazoom:jlayer:1.0.1"
+}

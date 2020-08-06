@@ -15,8 +15,9 @@
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <Button fx:id="testButton" layoutX="112.0" layoutY="115.0" mnemonicParsing="false" onAction="#handleTestButtonAction" text="Button" />
-                        <Text id="outputText" fx:id="outputText" layoutX="112.0" layoutY="45.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
+                        <Button fx:id="testButton" layoutX="37.0" layoutY="307.0" mnemonicParsing="false" onAction="#handleTestButtonAction" text="Button" />
+                        <Text id="outputText" fx:id="outputText" layoutX="190.0" layoutY="324.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
+                        <TextArea fx:id="textToSayTextArea" layoutX="14.0" layoutY="14.0" prefHeight="200.0" prefWidth="570.0" />
                      </children></AnchorPane>
             </content>
           </Tab>
