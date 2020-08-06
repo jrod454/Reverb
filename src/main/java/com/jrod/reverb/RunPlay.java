@@ -1,5 +1,8 @@
 package com.jrod.reverb;
 
+import com.google.api.gax.core.CredentialsProvider;
+import com.google.api.gax.core.FixedCredentialsProvider;
+import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.cloud.texttospeech.v1.*;
 import com.google.protobuf.ByteString;
 import javazoom.jl.player.Player;
@@ -18,7 +21,10 @@ public class RunPlay implements Runnable{
 
     @Override
     public void run() {
-        try (TextToSpeechClient textToSpeechClient = TextToSpeechClient.create()) {
+        try {
+            CredentialsProvider credentialsProvider = FixedCredentialsProvider.create(ServiceAccountCredentials.fromStream(getClass().getClassLoader().getResourceAsStream("Reverb-23a41ae3c3d9.json")));
+            TextToSpeechSettings settings = TextToSpeechSettings.newBuilder().setCredentialsProvider(credentialsProvider).build();
+            TextToSpeechClient textToSpeechClient = TextToSpeechClient.create(settings);
             // Set the text input to be synthesized
             SynthesisInput input = SynthesisInput.newBuilder().setText(this.inputText).build();
 

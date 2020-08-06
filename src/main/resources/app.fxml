@@ -18,6 +18,7 @@
                         <Button fx:id="testButton" layoutX="37.0" layoutY="307.0" mnemonicParsing="false" onAction="#handleTestButtonAction" text="Button" />
                         <Text id="outputText" fx:id="outputText" layoutX="190.0" layoutY="324.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
                         <TextArea fx:id="textToSayTextArea" layoutX="14.0" layoutY="14.0" prefHeight="200.0" prefWidth="570.0" />
+                        <Button layoutX="396.0" layoutY="307.0" mnemonicParsing="false" onMousePressed="#recordButtonPressedAction" onMouseReleased="#recordButtonReleasedAction" text="Record" />
                      </children></AnchorPane>
             </content>
           </Tab>
