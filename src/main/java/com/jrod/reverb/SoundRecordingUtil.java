@@ -1,12 +1,14 @@
 package com.jrod.reverb;
 
+import sun.audio.AudioDataStream;
+
 import javax.sound.sampled.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 
-public class SoundRecordingUtil {
+public class SoundRecordingUtil implements Runnable{
     private static final int BUFFER_SIZE = 4096;
     private ByteArrayOutputStream recordBytes;
     private TargetDataLine audioLine;
@@ -24,48 +26,65 @@ public class SoundRecordingUtil {
                 bigEndian);
     }
 
-    public void start() throws LineUnavailableException{
+    @Override
+    public void run() {
         format = getAudioFormat();
         DataLine.Info info = new DataLine.Info(TargetDataLine.class, format);
 
         System.out.println("stuck1");
-        // checks if system supports the data line
-        if (!AudioSystem.isLineSupported(info)) {
-            throw new LineUnavailableException(
-                    "The system does not support the specified format.");
-        }
 
-        audioLine = AudioSystem.getTargetDataLine(format);
+        try {
+            // checks if system supports the data line
+            if (!AudioSystem.isLineSupported(info)) {
+                throw new LineUnavailableException(
+                        "The system does not support the specified format.");
+            }
 
-        System.out.println("stuck2");
+            Mixer.Info[] mixerInfo = AudioSystem.getMixerInfo();
+            int index = 0;
+            for (int i = 0; i < mixerInfo.length; i++) {
+                System.out.println(i + ": " + mixerInfo[i].getName());
+                if (mixerInfo[i].getName().contains("Analogue 1 + 2 (Focusrite Usb Audio)")) {
+                    index = i;
+                    break;
+                }
+            }
+            audioLine = AudioSystem.getTargetDataLine(format, mixerInfo[index]);
 
-        audioLine.open(format, BUFFER_SIZE * 5);
-        audioLine.start();
+            System.out.println("stuck2");
 
-        System.out.println("stuck3");
+            audioLine.open(format, BUFFER_SIZE * 5);
+            audioLine.start();
 
-        byte[] buffer = new byte[BUFFER_SIZE];
-        int bytesRead = 0;
+            System.out.println("stuck3");
 
-        recordBytes = new ByteArrayOutputStream();
-        isRunning = true;
+            byte[] buffer = new byte[BUFFER_SIZE];
+            int bytesRead = 0;
 
-        while (isRunning) {
-            bytesRead = audioLine.read(buffer, 0, buffer.length);
-            recordBytes.write(buffer, 0, bytesRead);
+            recordBytes = new ByteArrayOutputStream();
+            isRunning = true;
+
+            while (isRunning) {
+                bytesRead = audioLine.read(buffer, 0, buffer.length);
+                recordBytes.write(buffer, 0, bytesRead);
+            }
+            if (audioLine != null) {
+                audioLine.flush();
+                audioLine.close();
+            }
+            try {
+                recordBytes.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } catch (LineUnavailableException e) {
+            e.printStackTrace();
         }
     }
 
-    public void stop() throws IOException, InterruptedException {
+    public void stop() throws InterruptedException {
         Thread.sleep(1000);
         isRunning = false;
-        if (audioLine != null) {
-            System.out.println("stuck15555");
-            audioLine.flush();
-            System.out.println("stuck6771");
-            audioLine.close();
-            System.out.println("stuck13333332222");
-        }
     }
 
     public void save(File wavFile) throws IOException {
@@ -78,5 +97,22 @@ public class SoundRecordingUtil {
 
         audioInputStream.close();
         recordBytes.close();
+    }
+
+    public byte[] getData() throws Exception{
+        byte[] audioData = recordBytes.toByteArray();
+        ByteArrayInputStream bais = new ByteArrayInputStream(audioData);
+        AudioInputStream audioInputStream = new AudioInputStream(bais, format,
+                audioData.length / format.getFrameSize());
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        AudioSystem.write(audioInputStream, AudioFileFormat.Type.WAVE, byteArrayOutputStream);
+        return byteArrayOutputStream.toByteArray();
+    }
+
+    public AudioInputStream getStream() {
+        byte[] audioData = recordBytes.toByteArray();
+        ByteArrayInputStream bais = new ByteArrayInputStream(audioData);
+        return new AudioInputStream(bais, format,
+                audioData.length / format.getFrameSize());
     }
 }

@@ -7,24 +7,40 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.jrod.reverb.AppController">
+<AnchorPane fx:id="anchorPane" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.jrod.reverb.AppController">
    <children>
-      <TabPane prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE">
+      <TabPane fx:id="tabPane" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE">
         <tabs>
           <Tab text="Main">
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <Button fx:id="testButton" layoutX="37.0" layoutY="307.0" mnemonicParsing="false" onAction="#handleTestButtonAction" text="Button" />
-                        <Text id="outputText" fx:id="outputText" layoutX="190.0" layoutY="324.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
-                        <TextArea fx:id="textToSayTextArea" layoutX="14.0" layoutY="14.0" prefHeight="200.0" prefWidth="570.0" />
-                        <Button layoutX="396.0" layoutY="307.0" mnemonicParsing="false" onMousePressed="#recordButtonPressedAction" onMouseReleased="#recordButtonReleasedAction" text="Record" />
+                        <Button fx:id="playButton" layoutX="14.0" layoutY="226.0" mnemonicParsing="false" onAction="#playButtonAction" text="Play the Text" />
+                        <TextArea fx:id="textToSayTextArea" layoutX="14.0" layoutY="14.0" prefHeight="200.0" prefWidth="570.0" wrapText="true" />
+                        <Button fx:id="recordButton" layoutX="530.0" layoutY="226.0" mnemonicParsing="false" onMousePressed="#recordButtonPressedAction" onMouseReleased="#recordButtonReleasedAction" text="Record" />
                      </children></AnchorPane>
             </content>
           </Tab>
           <Tab text="Settings">
             <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <ComboBox fx:id="outputComboBoxSettings" layoutX="102.0" layoutY="14.0" prefHeight="25.0" prefWidth="300.0" />
+                        <Text layoutX="26.0" layoutY="31.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Output" />
+                        <Text layoutX="31.0" layoutY="85.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Input" />
+                        <ComboBox fx:id="inputComboBoxSettings" disable="true" layoutX="102.0" layoutY="68.0" prefHeight="25.0" prefWidth="300.0" />
+                        <Slider fx:id="pitchSlider" layoutX="102.0" layoutY="172.0" max="20.0" min="-20.0" prefHeight="14.0" prefWidth="300.0" />
+                        <Text layoutX="32.0" layoutY="184.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Pitch" />
+                        <Text layoutX="29.0" layoutY="235.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Speed" />
+                        <Slider fx:id="speedSlider" layoutX="102.0" layoutY="224.0" max="4.0" min="0.25" prefHeight="14.0" prefWidth="300.0" value="1.0" />
+                        <ComboBox fx:id="voiceNameComboBox" layoutX="102.0" layoutY="120.0" prefHeight="25.0" prefWidth="301.0" />
+                        <Text layoutX="13.0" layoutY="137.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Voice Name" />
+                        <Text fx:id="speedSliderValue" layoutX="403.0" layoutY="236.0" strokeType="OUTSIDE" strokeWidth="0.0" text="SpeedValue" />
+                        <Text fx:id="pitchSliderValue" layoutX="403.0" layoutY="184.0" strokeType="OUTSIDE" strokeWidth="0.0" text="PitchValue" />
+                        <Text layoutX="8.0" layoutY="353.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Google Credentials" />
+                        <TextField fx:id="credTextField" layoutX="122.0" layoutY="336.0" prefHeight="25.0" prefWidth="410.0" />
+                        <Button fx:id="selectCredButton" layoutX="538.0" layoutY="336.0" mnemonicParsing="false" onAction="#chooseGoogleCredFile" text="Select" />
+                     </children></AnchorPane>
             </content>
           </Tab>
         </tabs>
