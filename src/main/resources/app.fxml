@@ -25,10 +25,10 @@
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <ComboBox fx:id="outputComboBoxSettings" layoutX="102.0" layoutY="14.0" prefHeight="25.0" prefWidth="300.0" />
+                        <ComboBox fx:id="outputComboBoxSettings" disable="true" layoutX="102.0" layoutY="14.0" prefHeight="25.0" prefWidth="300.0" />
                         <Text layoutX="26.0" layoutY="31.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Output" />
                         <Text layoutX="31.0" layoutY="85.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Input" />
-                        <ComboBox fx:id="inputComboBoxSettings" disable="true" layoutX="102.0" layoutY="68.0" prefHeight="25.0" prefWidth="300.0" />
+                        <ComboBox fx:id="inputComboBoxSettings" layoutX="102.0" layoutY="68.0" prefHeight="25.0" prefWidth="300.0" />
                         <Slider fx:id="pitchSlider" layoutX="102.0" layoutY="172.0" max="20.0" min="-20.0" prefHeight="14.0" prefWidth="300.0" />
                         <Text layoutX="32.0" layoutY="184.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Pitch" />
                         <Text layoutX="29.0" layoutY="235.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Speed" />

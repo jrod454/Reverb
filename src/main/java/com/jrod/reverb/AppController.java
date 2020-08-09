@@ -214,7 +214,7 @@ public class AppController implements Initializable {
     protected void recordButtonPressedAction(MouseEvent event) {
         System.out.println("pressed record");
 
-        recorder = new SoundRecordingUtil();
+        recorder = new SoundRecordingUtil(selectedInput);
 
         Thread recordThread = new Thread(recorder);
         recordThread.start();

@@ -13,8 +13,13 @@ public class SoundRecordingUtil implements Runnable{
     private ByteArrayOutputStream recordBytes;
     private TargetDataLine audioLine;
     private AudioFormat format;
+    private Mixer.Info mixerInfo;
 
     private boolean isRunning;
+
+    public SoundRecordingUtil(Mixer.Info mixerInfo) {
+        this.mixerInfo = mixerInfo;
+    }
 
     AudioFormat getAudioFormat() {
         float sampleRate = 32000;
@@ -40,16 +45,7 @@ public class SoundRecordingUtil implements Runnable{
                         "The system does not support the specified format.");
             }
 
-            Mixer.Info[] mixerInfo = AudioSystem.getMixerInfo();
-            int index = 0;
-            for (int i = 0; i < mixerInfo.length; i++) {
-                System.out.println(i + ": " + mixerInfo[i].getName());
-                if (mixerInfo[i].getName().contains("Analogue 1 + 2 (Focusrite Usb Audio)")) {
-                    index = i;
-                    break;
-                }
-            }
-            audioLine = AudioSystem.getTargetDataLine(format, mixerInfo[index]);
+            audioLine = AudioSystem.getTargetDataLine(format, mixerInfo);
 
             System.out.println("stuck2");
 
