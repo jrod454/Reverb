@@ -98,7 +98,7 @@ public class AppController implements Initializable {
         tabPane.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
-                if (event.getCode() == KeyCode.BACK_QUOTE && !isPressed) {
+                if (event.getCode() == KeyCode.ADD && !isPressed) {
                     recordButtonPressedAction(null);
                     isPressed = true;
                 } else if (event.getCode() == KeyCode.ENTER && isControlPressed && !isEnterPressed) {
@@ -117,7 +117,7 @@ public class AppController implements Initializable {
         tabPane.addEventFilter(KeyEvent.KEY_RELEASED, new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
-                if (event.getCode() == KeyCode.BACK_QUOTE && isPressed) {
+                if (event.getCode() == KeyCode.ADD && isPressed) {
                     try {
                         recordButtonReleasedAction(null);
                         isPressed = false;

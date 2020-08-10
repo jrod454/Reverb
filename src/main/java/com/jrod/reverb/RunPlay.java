@@ -5,6 +5,7 @@ import com.google.api.gax.core.FixedCredentialsProvider;
 import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.cloud.texttospeech.v1.*;
 import com.google.protobuf.ByteString;
+import javazoom.jl.player.JavaSoundAudioDeviceFactory;
 import javazoom.jl.player.Player;
 
 import javax.sound.sampled.*;
