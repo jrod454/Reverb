@@ -33,7 +33,7 @@
                         <Text layoutX="32.0" layoutY="184.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Pitch" />
                         <Text layoutX="29.0" layoutY="235.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Speed" />
                         <Slider fx:id="speedSlider" layoutX="102.0" layoutY="224.0" max="4.0" min="0.25" prefHeight="14.0" prefWidth="300.0" value="1.0" />
-                        <ComboBox fx:id="voiceNameComboBox" layoutX="102.0" layoutY="120.0" prefHeight="25.0" prefWidth="301.0" />
+                        <ComboBox fx:id="voiceNameComboBox" layoutX="102.0" layoutY="120.0" prefHeight="25.0" prefWidth="214.0" />
                         <Text layoutX="13.0" layoutY="137.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Voice Name" />
                         <Text fx:id="speedSliderValue" layoutX="403.0" layoutY="236.0" strokeType="OUTSIDE" strokeWidth="0.0" text="SpeedValue" />
                         <Text fx:id="pitchSliderValue" layoutX="403.0" layoutY="184.0" strokeType="OUTSIDE" strokeWidth="0.0" text="PitchValue" />
@@ -44,6 +44,8 @@
                         <TextField fx:id="recordButtonKeyCode" disable="true" layoutX="149.0" layoutY="256.0" prefHeight="25.0" prefWidth="75.0" />
                         <Text layoutX="14.0" layoutY="273.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Record Button KeyCode" />
                         <Button fx:id="setRecordButtonKeyCodeButton" layoutX="226.0" layoutY="256.0" mnemonicParsing="false" onMouseClicked="#setRecordKeyCode" text="Set as last key pressed" />
+                        <ComboBox fx:id="wavenetComboBox" layoutX="412.0" layoutY="120.0" prefWidth="150.0" />
+                        <Text layoutX="355.0" layoutY="137.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Wavenet" />
                      </children></AnchorPane>
             </content>
           </Tab>

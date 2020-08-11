@@ -19,17 +19,19 @@ public class RunPlay implements Runnable{
     private String credFileString;
     private String inputText;
     private Mixer.Info mixerInfo;
-    private String voiceName;
     private double pitch;
     private double speed;
+    private String langCode;
+    private String wavenet;
 
-    public RunPlay(String credFileString, String str, Mixer.Info info, String voiceName, double pitch, double speed) {
+    public RunPlay(String credFileString, String inputText, Mixer.Info mixerInfo, double pitch, double speed, String langCode, String wavenet) {
         this.credFileString = credFileString;
-        this.inputText = str;
-        this.mixerInfo = info;
-        this.voiceName = voiceName;
+        this.inputText = inputText;
+        this.mixerInfo = mixerInfo;
         this.pitch = pitch;
         this.speed = speed;
+        this.langCode = langCode;
+        this.wavenet = wavenet;
     }
 
     @Override
@@ -69,8 +71,8 @@ public class RunPlay implements Runnable{
             // ("neutral")
             VoiceSelectionParams voice =
                     VoiceSelectionParams.newBuilder()
-                            .setLanguageCode("en-US")
-                            .setName(voiceName)
+                            .setLanguageCode(langCode)
+                            .setName(wavenet)
                             .build();
 
             // Select the type of audio file you want returned

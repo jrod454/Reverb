@@ -4,9 +4,6 @@ import com.google.api.gax.core.CredentialsProvider;
 import com.google.api.gax.core.FixedCredentialsProvider;
 import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.cloud.speech.v1.*;
-import com.google.cloud.texttospeech.v1.ListVoicesRequest;
-import com.google.cloud.texttospeech.v1.ListVoicesResponse;
-import com.google.cloud.texttospeech.v1.Voice;
 import com.google.protobuf.ByteString;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -31,6 +28,8 @@ import javax.sound.sampled.Mixer;
 import java.io.File;
 import java.io.FileInputStream;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
@@ -61,6 +60,10 @@ public class AppController implements Initializable {
     private ComboBox<Mixer.Info> inputComboBoxSettings;
     @FXML
     private ComboBox<String> voiceNameComboBox;
+    @FXML
+    private ComboBox<String> wavenetComboBox;
+    private String selectedLangCode;
+    private String selectedLangWavenet;
     @FXML
     private Slider pitchSlider;
     @FXML
@@ -201,23 +204,29 @@ public class AppController implements Initializable {
             }
         }
 
-        voiceNameComboBox.getItems().addAll(
-                "en-US-Wavenet-A",
-                "en-US-Wavenet-B",
-                "en-US-Wavenet-C",
-                "en-US-Wavenet-D",
-                "en-US-Wavenet-E",
-                "en-US-Wavenet-F");
-
-        String savedVoiceName = preferences.get("savedVoiceName", "en-US-Wavenet-A");
-        voiceNameComboBox.setValue(savedVoiceName);
-
-        voiceNameComboBox.setOnAction(new EventHandler<ActionEvent>() {
+        LanguageProfiles profiles = new LanguageProfiles();
+        voiceNameComboBox.getItems().addAll(profiles.getNames());
+        voiceNameComboBox.valueProperty().addListener(new ChangeListener<String>() {
             @Override
-            public void handle(ActionEvent event) {
-                preferences.put("savedVoiceName", voiceNameComboBox.getValue());
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                preferences.put("savedVoiceName", newValue);
+                wavenetComboBox.getItems().setAll(profiles.getWavenetsForName(newValue));
+                selectedLangCode = profiles.getCodeForName(newValue);
             }
         });
+
+        wavenetComboBox.valueProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                preferences.put("savedWavenet", newValue);
+                selectedLangWavenet = newValue;
+            }
+        });
+
+        String savedWavenet = preferences.get("savedWavenet", "en-US-Wavenet-A");
+        wavenetComboBox.setValue(savedWavenet);
+        String savedVoiceName = preferences.get("savedVoiceName", "English (US)");
+        voiceNameComboBox.setValue(savedVoiceName);
 
         pitchSlider.valueProperty().addListener(new ChangeListener<Number>() {
             @Override
@@ -251,6 +260,8 @@ public class AppController implements Initializable {
         });
         String savedEnableEnhancedVoice = preferences.get("savedEnableEnhancedVoice", "false");
         enableEnhancedVoice.setSelected(Boolean.parseBoolean(savedEnableEnhancedVoice));
+
+
     }
 
     @FXML
@@ -322,7 +333,7 @@ public class AppController implements Initializable {
 
     private void processTextAndPlayAudio(String text) throws Exception {
         System.out.println("processing text");
-        RunPlay worker = new RunPlay(credTextField.getText(), text, selectedOutput, voiceNameComboBox.getValue(), pitchSlider.getValue(), speedSlider.getValue());
+        RunPlay worker = new RunPlay(credTextField.getText(), text, selectedOutput, pitchSlider.getValue(), speedSlider.getValue(), selectedLangCode, selectedLangWavenet);
         Thread thread = new Thread(worker);
         thread.start();
     }
