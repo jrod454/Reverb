@@ -12,6 +12,7 @@ dependencies {
     compile "com.google.cloud:google-cloud-texttospeech:+"
     compile "com.google.cloud:google-cloud-speech:+"
     compile "javazoom:jlayer:1.0.1"
+    compile "com.1stleg:jnativehook:+"
 }
 
 mainClassName = 'com.jrod.reverb.Main'

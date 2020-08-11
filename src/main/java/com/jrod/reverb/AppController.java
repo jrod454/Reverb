@@ -4,6 +4,9 @@ import com.google.api.gax.core.CredentialsProvider;
 import com.google.api.gax.core.FixedCredentialsProvider;
 import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.cloud.speech.v1.*;
+import com.google.cloud.texttospeech.v1.ListVoicesRequest;
+import com.google.cloud.texttospeech.v1.ListVoicesResponse;
+import com.google.cloud.texttospeech.v1.Voice;
 import com.google.protobuf.ByteString;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -19,6 +22,9 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.jnativehook.GlobalScreen;
+import org.jnativehook.keyboard.NativeKeyEvent;
+import org.jnativehook.keyboard.NativeKeyListener;
 
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Mixer;
@@ -63,6 +69,8 @@ public class AppController implements Initializable {
     private Slider speedSlider;
     @FXML
     private Text speedSliderValue;
+    @FXML
+    private CheckBox enableEnhancedVoice;
 
     @FXML
     private TextField credTextField;
@@ -79,10 +87,50 @@ public class AppController implements Initializable {
 
     private Preferences preferences;
 
+    @FXML
+    private TextField recordButtonKeyCode;
+    private int lastKeyPressedKeyCode = 0;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         System.out.println("Initializing controller.");
         preferences = Preferences.userNodeForPackage(AppController.class);
+
+        String savedRecordButtonKeyCode = preferences.get("savedRecordButtonKeyCode", "11");
+        recordButtonKeyCode.setText(savedRecordButtonKeyCode);
+
+        try {
+            GlobalScreen.addNativeKeyListener(new NativeKeyListener() {
+                @Override
+                public void nativeKeyTyped(NativeKeyEvent nativeKeyEvent) {
+
+                }
+
+                @Override
+                public void nativeKeyPressed(NativeKeyEvent nativeKeyEvent) {
+                    lastKeyPressedKeyCode = nativeKeyEvent.getKeyCode();
+
+                    if (nativeKeyEvent.getKeyCode() == Integer.parseInt(recordButtonKeyCode.getText()) && !isPressed) {
+                        recordButtonPressedAction(null);
+                        isPressed = true;
+                    }
+                }
+
+                @Override
+                public void nativeKeyReleased(NativeKeyEvent nativeKeyEvent) {
+                    if (nativeKeyEvent.getKeyCode() == Integer.parseInt(recordButtonKeyCode.getText()) && isPressed) {
+                        try {
+                            recordButtonReleasedAction(null);
+                            isPressed = false;
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         Mixer.Info[] mixerInfo = AudioSystem.getMixerInfo();
         for (Mixer.Info info : mixerInfo) {
@@ -98,10 +146,7 @@ public class AppController implements Initializable {
         tabPane.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
-                if (event.getCode() == KeyCode.ADD && !isPressed) {
-                    recordButtonPressedAction(null);
-                    isPressed = true;
-                } else if (event.getCode() == KeyCode.ENTER && isControlPressed && !isEnterPressed) {
+                if (event.getCode() == KeyCode.ENTER && isControlPressed && !isEnterPressed) {
                     try {
                         playButtonAction(null);
                         isEnterPressed = true;
@@ -117,14 +162,7 @@ public class AppController implements Initializable {
         tabPane.addEventFilter(KeyEvent.KEY_RELEASED, new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
-                if (event.getCode() == KeyCode.ADD && isPressed) {
-                    try {
-                        recordButtonReleasedAction(null);
-                        isPressed = false;
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                } else if (event.getCode() == KeyCode.ENTER && isEnterPressed) {
+                if (event.getCode() == KeyCode.ENTER && isEnterPressed) {
                     isEnterPressed = false;
                 } else if (event.getCode() == KeyCode.CONTROL) {
                     isControlPressed = false;
@@ -203,6 +241,22 @@ public class AppController implements Initializable {
         pitchSliderValue.setText(String.format("%1.2f", Double.parseDouble(savedPitch)));
         speedSlider.setValue(Double.parseDouble(savedSpeed));
         speedSliderValue.setText(String.format("%1.2f", Double.parseDouble(savedSpeed)));
+
+
+        enableEnhancedVoice.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                preferences.put("savedEnableEnhancedVoice", newValue.toString());
+            }
+        });
+        String savedEnableEnhancedVoice = preferences.get("savedEnableEnhancedVoice", "false");
+        enableEnhancedVoice.setSelected(Boolean.parseBoolean(savedEnableEnhancedVoice));
+    }
+
+    @FXML
+    protected void setRecordKeyCode() {
+        preferences.put("savedRecordButtonKeyCode", Integer.toString(lastKeyPressedKeyCode));
+        recordButtonKeyCode.setText(Integer.toString(lastKeyPressedKeyCode));
     }
 
     @FXML
@@ -232,12 +286,16 @@ public class AppController implements Initializable {
             ByteString audioBytes = ByteString.copyFrom(recorder.getData());
             System.out.println("released 1");
             // Builds the sync recognize request
-            RecognitionConfig config =
-                    RecognitionConfig.newBuilder()
-                            .setEncoding(RecognitionConfig.AudioEncoding.LINEAR16)
-                            .setSampleRateHertz(32000)
-                            .setLanguageCode("en-US")
-                            .build();
+            RecognitionConfig.Builder builder = RecognitionConfig.newBuilder()
+                    .setEncoding(RecognitionConfig.AudioEncoding.LINEAR16)
+                    .setSampleRateHertz(32000)
+                    .setLanguageCode("en-US");
+            if (enableEnhancedVoice.selectedProperty().getValue()) {
+                System.out.println("Using enhanced voice recognition.");
+                builder.setUseEnhanced(true);
+                builder.setModel("video");
+            }
+            RecognitionConfig config = builder.build();
             RecognitionAudio audio = RecognitionAudio.newBuilder().setContent(audioBytes).build();
             System.out.println("released 2");
             // Performs speech recognition on the audio file

@@ -13,6 +13,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.List;
 
 public class RunPlay implements Runnable{
     private String credFileString;
@@ -37,6 +38,30 @@ public class RunPlay implements Runnable{
             CredentialsProvider credentialsProvider = FixedCredentialsProvider.create(ServiceAccountCredentials.fromStream(new FileInputStream(credFileString)));
             TextToSpeechSettings settings = TextToSpeechSettings.newBuilder().setCredentialsProvider(credentialsProvider).build();
             TextToSpeechClient textToSpeechClient = TextToSpeechClient.create(settings);
+
+//            ListVoicesRequest request = ListVoicesRequest.getDefaultInstance();
+//
+//            // Performs the list voices request
+//            ListVoicesResponse response1 = textToSpeechClient.listVoices(request);
+//            List<Voice> voices = response1.getVoicesList();
+//
+//            for (Voice voice : voices) {
+//                // Display the voice's name. Example: tpc-vocoded
+//                System.out.format("Name: %s\n", voice.getName());
+//
+//                // Display the supported language codes for this voice. Example: "en-us"
+//                List<ByteString> languageCodes = voice.getLanguageCodesList().asByteStringList();
+//                for (ByteString languageCode : languageCodes) {
+//                    System.out.format("Supported Language: %s\n", languageCode.toStringUtf8());
+//                }
+//
+//                // Display the SSML Voice Gender
+//                System.out.format("SSML Voice Gender: %s\n", voice.getSsmlGender());
+//
+//                // Display the natural sample rate hertz for this voice. Example: 24000
+//                System.out.format("Natural Sample Rate Hertz: %s\n\n", voice.getNaturalSampleRateHertz());
+//            }
+
             // Set the text input to be synthesized
             SynthesisInput input = SynthesisInput.newBuilder().setText(this.inputText).build();
 
