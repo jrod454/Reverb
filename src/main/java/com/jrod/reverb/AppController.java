@@ -28,6 +28,8 @@ import javax.sound.sampled.Mixer;
 import java.io.File;
 import java.io.FileInputStream;
 import java.net.URL;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
@@ -75,7 +77,6 @@ public class AppController implements Initializable {
     private Mixer.Info selectedInput;
 
     private SoundRecordingUtil recorder;
-
 
     private Preferences preferences;
 
@@ -298,7 +299,7 @@ public class AppController implements Initializable {
 
     @FXML
     protected void recordButtonPressedAction(MouseEvent event) {
-        System.out.println("pressed record");
+        System.out.println("Pressed record button.");
 
         recorder = new SoundRecordingUtil(selectedInput);
 
@@ -308,44 +309,45 @@ public class AppController implements Initializable {
 
     @FXML
     protected void recordButtonReleasedAction(MouseEvent event) throws Exception {
-        System.out.println("released record");
+        System.out.println("Released record button.");
         recorder.stop();
+        //We check the time after the stop. Since the stop includes the artificial recording delay.
+        Instant start = Instant.now();
         try {
             CredentialsProvider credentialsProvider = FixedCredentialsProvider.create(ServiceAccountCredentials.fromStream(new FileInputStream(credTextField.getText())));
             SpeechSettings settings = SpeechSettings.newBuilder().setCredentialsProvider(credentialsProvider).build();
             SpeechClient speechClient = SpeechClient.create(settings);
 
             ByteString audioBytes = ByteString.copyFrom(recorder.getData());
-            System.out.println("released 1");
             // Builds the sync recognize request
             RecognitionConfig.Builder builder = RecognitionConfig.newBuilder()
                     .setEncoding(RecognitionConfig.AudioEncoding.LINEAR16)
                     .setSampleRateHertz(32000)
                     .setLanguageCode("en-US");
             if (enableEnhancedVoice.selectedProperty().getValue()) {
-                System.out.println("Using enhanced voice recognition.");
+                System.out.println("Using enhanced voice recognition for request.");
                 builder.setUseEnhanced(true);
                 builder.setModel("video");
             }
             RecognitionConfig config = builder.build();
             RecognitionAudio audio = RecognitionAudio.newBuilder().setContent(audioBytes).build();
-            System.out.println("released 2");
             // Performs speech recognition on the audio file
             RecognizeResponse response = speechClient.recognize(config, audio);
-            System.out.println("released 3");
             List<SpeechRecognitionResult> results = response.getResultsList();
-            System.out.println("released 4");
             if (results.size() == 0) {
                 System.out.println("No results");
             }
             for (SpeechRecognitionResult result : results) {
-                System.out.println("results");
                 // There can be several alternative transcripts for a given chunk of speech. Just use the
                 // first (most likely) one here.
                 SpeechRecognitionAlternative alternative = result.getAlternativesList().get(0);
-                System.out.printf("Transcription: %s%n", alternative.getTranscript());
+                System.out.printf("Speech-to-text result: %s%n", alternative.getTranscript());
                 processTextAndPlayAudio(alternative.getTranscript());
                 textToSayTextArea.setText(alternative.getTranscript());
+                Instant finish = Instant.now();
+                long timeElapsed = Duration.between(start, finish).toMillis();
+                float timeInSeconds = timeElapsed / 1000.0f;
+                System.out.printf("Total translation took: %.3f seconds%n", timeInSeconds);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -353,7 +355,6 @@ public class AppController implements Initializable {
     }
 
     private void processTextAndPlayAudio(String text) throws Exception {
-        System.out.println("processing text");
         RunPlay worker = new RunPlay(credTextField.getText(), text, selectedOutput, pitchSlider.getValue(), speedSlider.getValue(), selectedLangCode, selectedLangWavenet);
         Thread thread = new Thread(worker);
         thread.start();
@@ -366,6 +367,7 @@ public class AppController implements Initializable {
         if (file != null) {
             credTextField.setText(file.getAbsolutePath());
             preferences.put("savedGoogleCredFile", file.getAbsolutePath());
+            System.out.println("Google credential json set to: " + file.getAbsolutePath());
         }
     }
 }

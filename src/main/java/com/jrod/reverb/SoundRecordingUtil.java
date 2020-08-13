@@ -36,8 +36,6 @@ public class SoundRecordingUtil implements Runnable{
         format = getAudioFormat();
         DataLine.Info info = new DataLine.Info(TargetDataLine.class, format);
 
-        System.out.println("stuck1");
-
         try {
             // checks if system supports the data line
             if (!AudioSystem.isLineSupported(info)) {
@@ -47,12 +45,8 @@ public class SoundRecordingUtil implements Runnable{
 
             audioLine = AudioSystem.getTargetDataLine(format, mixerInfo);
 
-            System.out.println("stuck2");
-
             audioLine.open(format, BUFFER_SIZE * 5);
             audioLine.start();
-
-            System.out.println("stuck3");
 
             byte[] buffer = new byte[BUFFER_SIZE];
             int bytesRead = 0;

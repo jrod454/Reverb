@@ -82,6 +82,7 @@ public class RunPlay implements Runnable{
                             .setSpeakingRate(speed)
                             .build();
 
+            System.out.println("Text-to-speech request sent to google for processing.");
             // Perform the text-to-speech request on the text input with the selected voice parameters and
             // audio file type
             SynthesizeSpeechResponse response =
@@ -89,6 +90,7 @@ public class RunPlay implements Runnable{
 
             // Get the audio contents from the response
             ByteString audioContents = response.getAudioContent();
+            System.out.println("Text-to-speech response received from google.");
 //            Mixer.Info[] mixerInfo = AudioSystem.getMixerInfo();
 //            Mixer.Info info = mixerInfo[2]; //Edit this number to select output // 0 = Default
 //
@@ -106,6 +108,7 @@ public class RunPlay implements Runnable{
 //            MediaPlayer mediaPlayer = new MediaPlayer(hit);
 //            mediaPlayer.play();
 
+            System.out.println("Playing text-to-speech response audio.");
             Player player = new Player(audioContents.newInput());
             player.play();
 //
