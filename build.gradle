@@ -13,6 +13,7 @@ dependencies {
     compile "com.google.cloud:google-cloud-speech:+"
     compile "javazoom:jlayer:1.0.1"
     compile "com.1stleg:jnativehook:+"
+    compile "org.jfxtras:jmetro:8.6.5"
 }
 
 mainClassName = 'com.jrod.reverb.Main'
@@ -21,16 +22,6 @@ java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
 }
-
-//jar {
-//    manifest {
-//        attributes 'Main-Class': 'com.jrod.reverb.Main'
-//    }
-//
-//    from {
-//        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
-//    }
-//}
 
 javafx {
     version = "14"

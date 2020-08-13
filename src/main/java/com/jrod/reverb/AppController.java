@@ -28,8 +28,6 @@ import javax.sound.sampled.Mixer;
 import java.io.File;
 import java.io.FileInputStream;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
@@ -42,13 +40,7 @@ public class AppController implements Initializable {
     private TabPane tabPane;
 
     @FXML
-    private Button playButton;
-    @FXML
-    private Text outputText;
-    @FXML
     private TextArea textToSayTextArea;
-    @FXML
-    private Button recordButton;
     private boolean isPressed = false;
     private boolean isEnterPressed = false;
     private boolean isControlPressed = false;
@@ -77,8 +69,6 @@ public class AppController implements Initializable {
 
     @FXML
     private TextField credTextField;
-    @FXML
-    private Button selectCredButton;
     private FileChooser googleJsonFileChooser;
 
     private Mixer.Info selectedOutput;
@@ -86,7 +76,6 @@ public class AppController implements Initializable {
 
     private SoundRecordingUtil recorder;
 
-    private boolean isRunning;
 
     private Preferences preferences;
 
@@ -99,9 +88,25 @@ public class AppController implements Initializable {
         System.out.println("Initializing controller.");
         preferences = Preferences.userNodeForPackage(AppController.class);
 
+        initRecordButton();
+        initGlobalKeybindings();
+        initGoogleCredentials();
+        initLocalKeybindings();
+        initInputAndOutPut();
+        initVoiceAndWavenet();
+        initPitch();
+        initSpeed();
+        initEnhancedVoice();
+    }
+
+    private void initRecordButton() {
+        System.out.println("Initializing record button.");
         String savedRecordButtonKeyCode = preferences.get("savedRecordButtonKeyCode", "11");
         recordButtonKeyCode.setText(savedRecordButtonKeyCode);
+    }
 
+    private void initGlobalKeybindings() {
+        System.out.println("Initializing global keybindings.");
         try {
             GlobalScreen.addNativeKeyListener(new NativeKeyListener() {
                 @Override
@@ -134,18 +139,19 @@ public class AppController implements Initializable {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
 
-        Mixer.Info[] mixerInfo = AudioSystem.getMixerInfo();
-        for (Mixer.Info info : mixerInfo) {
-            System.out.println(info.getName());
-        }
-
+    private void initGoogleCredentials() {
+        System.out.println("Initializing google credentials.");
         googleJsonFileChooser = new FileChooser();
         googleJsonFileChooser.setTitle("Select Google Credential JSON file");
 
         String savedGoogleCredFile = preferences.get("savedGoogleCredFile", "No file selected!");
         credTextField.setText(savedGoogleCredFile);
+    }
 
+    private void initLocalKeybindings() {
+        System.out.println("Initializing local keybindings.");
         tabPane.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
@@ -172,7 +178,10 @@ public class AppController implements Initializable {
                 }
             }
         });
+    }
 
+    private void initInputAndOutPut() {
+        System.out.println("Initializing input and output device.");
         outputComboBoxSettings.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -188,6 +197,7 @@ public class AppController implements Initializable {
             }
         });
 
+        Mixer.Info[] mixerInfo = AudioSystem.getMixerInfo();
         outputComboBoxSettings.getItems().addAll(mixerInfo);
         inputComboBoxSettings.getItems().addAll(mixerInfo);
 
@@ -203,7 +213,10 @@ public class AppController implements Initializable {
                 inputComboBoxSettings.setValue(info);
             }
         }
+    }
 
+    private void initVoiceAndWavenet() {
+        System.out.println("Initializing voice and wavenet.");
         LanguageProfiles profiles = new LanguageProfiles();
         voiceNameComboBox.getItems().addAll(profiles.getNames());
         voiceNameComboBox.valueProperty().addListener(new ChangeListener<String>() {
@@ -227,7 +240,10 @@ public class AppController implements Initializable {
         wavenetComboBox.setValue(savedWavenet);
         String savedVoiceName = preferences.get("savedVoiceName", "English (US)");
         voiceNameComboBox.setValue(savedVoiceName);
+    }
 
+    private void initPitch() {
+        System.out.println("Initializing pitch.");
         pitchSlider.valueProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
@@ -236,6 +252,13 @@ public class AppController implements Initializable {
             }
         });
 
+        String savedPitch = preferences.get("savedPitch", "0");
+        pitchSlider.setValue(Double.parseDouble(savedPitch));
+        pitchSliderValue.setText(String.format("%1.2f", Double.parseDouble(savedPitch)));
+    }
+
+    private void initSpeed() {
+        System.out.println("Initializing speed.");
         speedSlider.valueProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
@@ -244,14 +267,13 @@ public class AppController implements Initializable {
             }
         });
 
-        String savedPitch = preferences.get("savedPitch", "0");
         String savedSpeed = preferences.get("savedSpeed", "1");
-        pitchSlider.setValue(Double.parseDouble(savedPitch));
-        pitchSliderValue.setText(String.format("%1.2f", Double.parseDouble(savedPitch)));
         speedSlider.setValue(Double.parseDouble(savedSpeed));
         speedSliderValue.setText(String.format("%1.2f", Double.parseDouble(savedSpeed)));
+    }
 
-
+    private void initEnhancedVoice() {
+        System.out.println("Initializing enhanced voice.");
         enableEnhancedVoice.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
@@ -260,14 +282,13 @@ public class AppController implements Initializable {
         });
         String savedEnableEnhancedVoice = preferences.get("savedEnableEnhancedVoice", "false");
         enableEnhancedVoice.setSelected(Boolean.parseBoolean(savedEnableEnhancedVoice));
-
-
     }
 
     @FXML
     protected void setRecordKeyCode() {
         preferences.put("savedRecordButtonKeyCode", Integer.toString(lastKeyPressedKeyCode));
         recordButtonKeyCode.setText(Integer.toString(lastKeyPressedKeyCode));
+        System.out.println("Record button keybinding set to: " + lastKeyPressedKeyCode);
     }
 
     @FXML
