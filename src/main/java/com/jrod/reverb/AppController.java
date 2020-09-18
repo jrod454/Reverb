@@ -88,6 +88,17 @@ public class AppController implements Initializable {
     private List<String> responseHistory = new ArrayList<>(10);
     private int historyCurrentIndex = 0;
 
+    @FXML
+    private Pagination editSavedResponsesPagination;
+    @FXML
+    private TextArea editSavedResponsesTextArea;
+    @FXML
+    private Slider editSavedResponsesSlider;
+    private SavedResponses savedResponses = new SavedResponses();
+
+    @FXML
+    private Pagination inputSavedResponsesPagination;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         System.out.println("Initializing controller.");
@@ -96,6 +107,20 @@ public class AppController implements Initializable {
         for (int i = 0; i < 10; i++) {
             responseHistory.add("");
         }
+
+        editSavedResponsesPagination.currentPageIndexProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                editSavedResponsesTextArea.setText(savedResponses.get(newValue.intValue()));
+            }
+        });
+
+        inputSavedResponsesPagination.currentPageIndexProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                textToSayTextArea.setText(savedResponses.get(newValue.intValue()));
+            }
+        });
 
         initRecordButton();
         initGlobalKeybindings();
@@ -291,6 +316,12 @@ public class AppController implements Initializable {
         });
         String savedEnableEnhancedVoice = preferences.get("savedEnableEnhancedVoice", "false");
         enableEnhancedVoice.setSelected(Boolean.parseBoolean(savedEnableEnhancedVoice));
+    }
+
+    @FXML
+    protected void saveResponsePressed() {
+        //subtract 1 since slider starts at 1 instead of 0
+        savedResponses.saveResponse((int) editSavedResponsesSlider.getValue() - 1, editSavedResponsesTextArea.getText());
     }
 
     @FXML

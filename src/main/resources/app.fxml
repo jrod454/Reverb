@@ -24,7 +24,7 @@
                            <font>
                               <Font name="System Bold" size="30.0" />
                            </font></Button>
-                        <Pagination layoutX="168.0" layoutY="332.0" pageCount="10" prefHeight="46.0" prefWidth="263.0" scaleX="2.7" scaleY="2.7" />
+                        <Pagination fx:id="inputSavedResponsesPagination" layoutX="168.0" layoutY="332.0" pageCount="10" prefHeight="46.0" prefWidth="263.0" scaleX="2.7" scaleY="2.7" />
                         <Button layoutX="133.0" layoutY="226.0" mnemonicParsing="false" onMousePressed="#historyBackPressed" text="&lt;">
                            <font>
                               <Font size="30.0" />
@@ -66,11 +66,18 @@
                      </children></AnchorPane>
             </content>
           </Tab>
-            <Tab text="Responses">
+            <Tab text="Saved Responses">
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <TextArea layoutX="14.0" layoutY="14.0" prefHeight="200.0" prefWidth="570.0" />
+                        <TextArea fx:id="editSavedResponsesTextArea" layoutX="14.0" layoutY="14.0" prefHeight="200.0" prefWidth="570.0" />
+                        <Pagination fx:id="editSavedResponsesPagination" layoutX="168.0" layoutY="332.0" pageCount="10" prefHeight="46.0" prefWidth="263.0" scaleX="2.7" scaleY="2.7" />
+                        <Button layoutX="221.0" layoutY="222.0" mnemonicParsing="false" onMousePressed="#saveResponsePressed" text="Save Response">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                        </Button>
+                        <Slider fx:id="editSavedResponsesSlider" blockIncrement="1.0" layoutX="15.0" layoutY="270.0" majorTickUnit="1.0" max="10.0" min="1.0" minorTickCount="0" prefHeight="38.0" prefWidth="572.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="1.0" />
                      </children>
                   </AnchorPane>
               </content>
