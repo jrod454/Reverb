@@ -24,6 +24,17 @@
                            <font>
                               <Font name="System Bold" size="30.0" />
                            </font></Button>
+                        <Pagination layoutX="168.0" layoutY="332.0" pageCount="10" prefHeight="46.0" prefWidth="263.0" scaleX="2.7" scaleY="2.7" />
+                        <Button layoutX="133.0" layoutY="226.0" mnemonicParsing="false" onMousePressed="#historyBackPressed" text="&lt;">
+                           <font>
+                              <Font size="30.0" />
+                           </font>
+                        </Button>
+                        <Button layoutX="204.0" layoutY="226.0" mnemonicParsing="false" onMousePressed="#historyForwardPressed" text="&gt;">
+                           <font>
+                              <Font size="30.0" />
+                           </font>
+                        </Button>
                      </children></AnchorPane>
             </content>
           </Tab>
@@ -55,6 +66,15 @@
                      </children></AnchorPane>
             </content>
           </Tab>
+            <Tab text="Responses">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <TextArea layoutX="14.0" layoutY="14.0" prefHeight="200.0" prefWidth="570.0" />
+                     </children>
+                  </AnchorPane>
+              </content>
+            </Tab>
         </tabs>
       </TabPane>
    </children>

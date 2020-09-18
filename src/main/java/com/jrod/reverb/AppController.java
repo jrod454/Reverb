@@ -30,6 +30,7 @@ import java.io.FileInputStream;
 import java.net.URL;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
@@ -84,10 +85,17 @@ public class AppController implements Initializable {
     private TextField recordButtonKeyCode;
     private int lastKeyPressedKeyCode = 0;
 
+    private List<String> responseHistory = new ArrayList<>(10);
+    private int historyCurrentIndex = 0;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         System.out.println("Initializing controller.");
         preferences = Preferences.userNodeForPackage(AppController.class);
+
+        for (int i = 0; i < 10; i++) {
+            responseHistory.add("");
+        }
 
         initRecordButton();
         initGlobalKeybindings();
@@ -286,6 +294,22 @@ public class AppController implements Initializable {
     }
 
     @FXML
+    protected void historyBackPressed() {
+        if (historyCurrentIndex != 0) {
+            historyCurrentIndex -= 1;
+            textToSayTextArea.setText(responseHistory.get(historyCurrentIndex));
+        }
+    }
+
+    @FXML
+    protected void historyForwardPressed() {
+        if (historyCurrentIndex != 9) {
+            historyCurrentIndex += 1;
+            textToSayTextArea.setText(responseHistory.get(historyCurrentIndex));
+        }
+    }
+
+    @FXML
     protected void setRecordKeyCode() {
         preferences.put("savedRecordButtonKeyCode", Integer.toString(lastKeyPressedKeyCode));
         recordButtonKeyCode.setText(Integer.toString(lastKeyPressedKeyCode));
@@ -356,6 +380,9 @@ public class AppController implements Initializable {
 
     private void processTextAndPlayAudio(String text) throws Exception {
         RunPlay worker = new RunPlay(credTextField.getText(), text, selectedOutput, pitchSlider.getValue(), speedSlider.getValue(), selectedLangCode, selectedLangWavenet);
+        responseHistory.add(0, text);
+        responseHistory.remove(10);
+        historyCurrentIndex = 0;
         Thread thread = new Thread(worker);
         thread.start();
     }
