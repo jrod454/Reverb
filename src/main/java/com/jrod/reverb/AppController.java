@@ -99,6 +99,9 @@ public class AppController implements Initializable {
     @FXML
     private Pagination inputSavedResponsesPagination;
 
+    @FXML
+    private CheckBox ssmlCheckBox;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         System.out.println("Initializing controller.");
@@ -415,7 +418,7 @@ public class AppController implements Initializable {
     }
 
     private void processTextAndPlayAudio(String text) throws Exception {
-        RunPlay worker = new RunPlay(credTextField.getText(), text, selectedOutput, pitchSlider.getValue(), speedSlider.getValue(), selectedLangCode, selectedLangWavenet);
+        RunPlay worker = new RunPlay(credTextField.getText(), text, selectedOutput, pitchSlider.getValue(), speedSlider.getValue(), selectedLangCode, selectedLangWavenet, ssmlCheckBox.isSelected());
         responseHistory.add(0, text);
         responseHistory.remove(10);
         historyCurrentIndex = 0;

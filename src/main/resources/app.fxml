@@ -35,6 +35,11 @@
                               <Font size="30.0" />
                            </font>
                         </Button>
+                        <CheckBox fx:id="ssmlCheckBox" layoutX="371.0" layoutY="226.0" mnemonicParsing="false" text="SSML">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </CheckBox>
                      </children></AnchorPane>
             </content>
           </Tab>

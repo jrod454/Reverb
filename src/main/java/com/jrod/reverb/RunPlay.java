@@ -23,8 +23,9 @@ public class RunPlay implements Runnable{
     private double speed;
     private String langCode;
     private String wavenet;
+    private boolean useSSML;
 
-    public RunPlay(String credFileString, String inputText, Mixer.Info mixerInfo, double pitch, double speed, String langCode, String wavenet) {
+    public RunPlay(String credFileString, String inputText, Mixer.Info mixerInfo, double pitch, double speed, String langCode, String wavenet, boolean useSSML) {
         this.credFileString = credFileString;
         this.inputText = inputText;
         this.mixerInfo = mixerInfo;
@@ -32,6 +33,7 @@ public class RunPlay implements Runnable{
         this.speed = speed;
         this.langCode = langCode;
         this.wavenet = wavenet;
+        this.useSSML = useSSML;
     }
 
     @Override
@@ -64,8 +66,12 @@ public class RunPlay implements Runnable{
 //                System.out.format("Natural Sample Rate Hertz: %s\n\n", voice.getNaturalSampleRateHertz());
 //            }
 
-            // Set the text input to be synthesized
-            SynthesisInput input = SynthesisInput.newBuilder().setText(this.inputText).build();
+            SynthesisInput input = null;
+            if(useSSML) {
+                input = SynthesisInput.newBuilder().setSsml(this.inputText).build();
+            } else {
+                input = SynthesisInput.newBuilder().setText(this.inputText).build();
+            }
 
             // Build the voice request, select the language code ("en-US") and the ssml voice gender
             // ("neutral")
