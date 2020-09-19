@@ -392,18 +392,23 @@ public class AppController implements Initializable {
             if (results.size() == 0) {
                 System.out.println("No results");
             }
+
+            String totalTranslation = "";
             for (SpeechRecognitionResult result : results) {
                 // There can be several alternative transcripts for a given chunk of speech. Just use the
                 // first (most likely) one here.
                 SpeechRecognitionAlternative alternative = result.getAlternativesList().get(0);
                 System.out.printf("Speech-to-text result: %s%n", alternative.getTranscript());
-                processTextAndPlayAudio(alternative.getTranscript());
-                textToSayTextArea.setText(alternative.getTranscript());
-                Instant finish = Instant.now();
-                long timeElapsed = Duration.between(start, finish).toMillis();
-                float timeInSeconds = timeElapsed / 1000.0f;
-                System.out.printf("Total translation took: %.3f seconds%n", timeInSeconds);
+                // Append all the results into one string.
+                totalTranslation += " ";
+                totalTranslation += alternative.getTranscript();
             }
+            processTextAndPlayAudio(totalTranslation);
+            textToSayTextArea.setText(totalTranslation);
+            Instant finish = Instant.now();
+            long timeElapsed = Duration.between(start, finish).toMillis();
+            float timeInSeconds = timeElapsed / 1000.0f;
+            System.out.printf("Total translation took: %.3f seconds%n", timeInSeconds);
         } catch (Exception e) {
             e.printStackTrace();
         }
